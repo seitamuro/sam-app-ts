@@ -33,6 +33,30 @@ Resources:
         Sourcemap: true
         EntryPoints:
           - app.ts
+
+  DateFunction:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: date/
+      Handler: app.lambdaHandler
+      Runtime: nodejs20.x
+      Architectures:
+        - x86_64
+      Events:
+        HelloWorld:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /date
+            Method: get
+    Metadata: # Manage esbuild properties
+      BuildMethod: esbuild
+      BuildProperties:
+        Minify: true
+        Target: "es2020"
+        Sourcemap: true
+        EntryPoints:
+          - app.ts
+
   HelloWorldFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
@@ -66,15 +90,26 @@ Outputs:
   HelloWorldFunction:
     Description: "Hello World Lambda Function ARN"
     Value: !GetAtt HelloWorldFunction.Arn
+  HelloWorldFunctionIamRole:
+    Description: "Implicit IAM Role created for Hello World function"
+    Value: !GetAtt HelloWorldFunctionRole.Arn
+
+  DateApi:
+    Description: "API Gateway endpoint URL for Prod stage for Good Bye function"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/date/"
+  DateFunction:
+    Description: "Goodbye Lambda Function ARN"
+    Value: !GetAtt DateFunction.Arn
+  DateFunctionIamRole:
+    Description: "Implicit IAM Role created for GoodBye function"
+    Value: !GetAtt HelloWorldFunctionRole.Arn
+
   GoodByeApi:
     Description: "API Gateway endpoint URL for Prod stage for Good Bye function"
     Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/goodbye/"
   GoodByeFunction:
     Description: "Goodbye Lambda Function ARN"
     Value: !GetAtt GoodByeFunction.Arn
-  HelloWorldFunctionIamRole:
-    Description: "Implicit IAM Role created for Hello World function"
-    Value: !GetAtt HelloWorldFunctionRole.Arn
   GoodByeFunctionIamRole:
     Description: "Implicit IAM Role created for GoodBye function"
     Value: !GetAtt HelloWorldFunctionRole.Arn
